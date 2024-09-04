@@ -49,8 +49,12 @@ export default function Login() {
       <Text style={styles.forgetPassword}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
-        <Button title="ENTRAR" onPress={getLogin} />
-        <Button title="CADASTRAR" onPress={press} variant="secondary" />
+        <Button
+          title="ENTRAR"
+          variant="primary"
+          onPress={() => console.log("Confirm")}
+        />
+        <Button title="CADASTRAR" onPress={press} variant="tertiary" />
       </View>
     </View>
   );

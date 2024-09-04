@@ -8,16 +8,39 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-  },
-  secondaryButton: {
-    backgroundColor: "#FFF",
+    flexDirection: "row",
+    paddingHorizontal: 10,
     marginTop: 20,
   },
+  secondaryButton: {
+    backgroundColor: "#3C5A9A",
+    borderColor: "#000",
+    borderWidth: 1,
+  },
+  tertiaryButton: {
+    backgroundColor: "#FFF",
+    borderColor: "#000",
+    borderWidth: 1,
+  },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  icon: {
+    marginRight: 10,
+  },
   textButton: {
-    color: "#000",
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    padding: 8,
+  },
+  textPrimary: {
+    color: "#000",
+  },
+  textSecondary: {
+    color: "#FFF",
+  },
+  textTertiary: {
+    color: "#000",
   },
 });

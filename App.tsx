@@ -1,5 +1,6 @@
-import Login from "./src/pages/login";
+import Home from "./src/pages/home";
+// import Login from "./src/pages/login";
 
 export default function App() {
-  return <Login />;
+  return <Home />;
 }

@@ -20,7 +20,7 @@ export default function Login() {
       }
 
       Alert.alert("Logado com sucesso!");
-    } catch (error) {}
+    } catch (error) { }
   }
 
   return (

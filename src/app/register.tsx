@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, Image, Alert } from "react-native";
-import { styles } from "./styles";
-import { Input } from "../../components/Input";
-import { Button } from "../../components/Button";
+import { StyleSheet } from "react-native";
+import { Input } from "../components/Input";
+import { Button } from "../components/Button";
 
 export default function Register() {
   const [nome, setNome] = useState("");
@@ -16,7 +16,7 @@ export default function Register() {
     <View style={styles.container}>
       <View style={styles.top}>
         <Image
-          source={require("../../assets/corraAgil.png")}
+          source={require("../assets/corraAgil.png")}
           style={{ marginTop: 23 }}
         />
       </View>
@@ -68,3 +68,35 @@ export default function Register() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#12263A",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  top: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  title: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 32,
+  },
+  containerInput: {
+    marginTop: 30,
+    alignItems: "center",
+  },
+
+  forgetPassword: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 20,
+    marginBottom: 33,
+  },
+  containerButton: {
+    marginBottom: 96,
+  },
+});

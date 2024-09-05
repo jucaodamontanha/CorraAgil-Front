@@ -1,10 +1,8 @@
 import { useState } from "react";
-
+import { StyleSheet } from "react-native";
 import { View, Text, Image, Alert } from "react-native";
-
-import { styles } from "./styles";
-import { Input } from "../../components/Input";
-import { Button } from "../../components/Button";
+import { Input } from "../components/Input";
+import { Button } from "../components/Button";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,20 +14,20 @@ export default function Login() {
   async function getLogin() {
     try {
       if (!email || !password) {
-        return Alert.alert("Atenção", "Emai e senha não podem ser em branco");
+        return Alert.alert("Atenção", "Email e senha não podem ser em branco");
       }
 
       Alert.alert("Logado com sucesso!");
-    } catch (error) { }
+    } catch (error) {}
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.top}>
-        <Image source={require("../../assets/topLogin.png")} />
+        <Image source={require("../assets/topLogin.png")} />
 
         <Image
-          source={require("../../assets/corraAgil.png")}
+          source={require("../assets/corraAgil.png")}
           style={{ marginTop: 23 }}
         />
       </View>
@@ -59,3 +57,35 @@ export default function Login() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#12263A",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  top: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  title: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 32,
+  },
+  containerInput: {
+    marginTop: 30,
+    alignItems: "center",
+  },
+
+  forgetPassword: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 20,
+    marginBottom: 33,
+  },
+  containerButton: {
+    marginBottom: 96,
+  },
+});

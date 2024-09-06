@@ -14,12 +14,12 @@ export const styles = StyleSheet.create({
   },
   secondaryButton: {
     backgroundColor: "#3C5A9A",
-    borderColor: "#000",
+    borderColor: "transparent",
     borderWidth: 1,
   },
   tertiaryButton: {
     backgroundColor: "#FFF",
-    borderColor: "#000",
+    borderColor: "transparent",
     borderWidth: 1,
   },
   content: {

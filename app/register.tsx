@@ -1,22 +1,19 @@
 import React, { useState } from "react";
-import { View, Text, Image, Alert } from "react-native";
+import { View, Text, Image } from "react-native";
 import { StyleSheet } from "react-native";
-import { Input } from "../components/Input";
-import { Button } from "../components/Button";
+import { Input } from "../src/components/Input";
+import { Button } from "../src/components/Button";
 
 export default function Register() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const press = () => {
-    Alert.alert("Botão pressionado!");
-  };
 
   return (
     <View style={styles.container}>
       <View style={styles.top}>
         <Image
-          source={require("../assets/corraAgil.png")}
+          source={require("../src/assets/corraAgil.png")}
           style={{ marginTop: 23 }}
         />
       </View>
@@ -46,23 +43,19 @@ export default function Register() {
           alignItems: "center",
         }}
       >
-        <Button
-          title="CONFIRMAR"
-          variant="primary"
-          onPress={() => console.log("Confirm")}
-        />
+        <Button destination="/" title="CONFIRMAR" variant="primary" />
 
         <Button
+          destination="/"
           title="Entrar com Facebook"
           variant="secondary"
           iconName="facebook"
-          onPress={() => console.log("Facebook Button Pressed")}
         />
         <Button
+          destination="/"
           title="Entrar com Google"
           variant="tertiary"
           iconName="google"
-          onPress={() => console.log("Google Button Pressed")}
         />
       </View>
     </View>

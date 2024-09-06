@@ -1,21 +1,19 @@
 import React from "react";
-import { View, Text, Image, Alert } from "react-native";
-import { Button } from "../components/Button";
+import { View, Text, Image } from "react-native";
+import { Button } from "../src/components/Button";
+import { StyleSheet } from "react-native";
+import { Link } from "expo-router";
 
 export default function Home() {
-  const press = () => {
-    Alert.alert("Botão pressionado!");
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.boxTop}>
         <View style={styles.background}>
-          <Image source={require("../assets/home.png")} />
+          <Image source={require("../src/assets/home.png")} />
         </View>
 
         <View style={styles.transparentView}>
-          <Image source={require("../assets/corraAgil.png")} />
+          <Image source={require("../src/assets/corraAgil.png")} />
 
           <Text style={styles.textTop}>Pronto para acelerar?</Text>
         </View>
@@ -25,7 +23,7 @@ export default function Home() {
         <Text style={styles.textMid}> Faça login e comece</Text>
         <Text style={styles.textRace}>sua corrida!</Text>
 
-        <Button title="COMEÇAR" onPress={press} variant="secondary" />
+        <Button destination="/login" title="COMEÇAR" variant="secondary" />
       </View>
 
       <View style={styles.boxBottom}>
@@ -39,8 +37,6 @@ export default function Home() {
     </View>
   );
 }
-
-import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {

@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { View, Text, Image, Alert } from "react-native";
-import { Input } from "../components/Input";
-import { Button } from "../components/Button";
+import { Input } from "../src/components/Input";
+import { Button } from "../src/components/Button";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const press = () => {
-    Alert.alert("Botão pressionado!");
-  };
 
   async function getLogin() {
     try {
@@ -24,10 +21,10 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <View style={styles.top}>
-        <Image source={require("../assets/topLogin.png")} />
+        <Image source={require("../src/assets/topLogin.png")} />
 
         <Image
-          source={require("../assets/corraAgil.png")}
+          source={require("../src/assets/corraAgil.png")}
           style={{ marginTop: 23 }}
         />
       </View>
@@ -47,12 +44,8 @@ export default function Login() {
       <Text style={styles.forgetPassword}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
-        <Button
-          title="ENTRAR"
-          variant="primary"
-          onPress={() => console.log("Confirm")}
-        />
-        <Button title="CADASTRAR" onPress={press} variant="tertiary" />
+        <Button destination="/" title="ENTRAR" variant="primary" />
+        <Button destination="/register" title="CADASTRAR" variant="tertiary" />
       </View>
     </View>
   );

@@ -3,11 +3,53 @@ import { View, Text, Image } from "react-native";
 import { StyleSheet } from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
+import * as Yup from "yup";
+import { useNavigation } from "@react-navigation/native";
+
+const validationSchema = Yup.object().shape({
+  nome: Yup.string()
+    .required("Nome é obrigatório")
+    .min(3, "Nome deve ter no mínimo 3 caracteres"),
+  email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
+  password: Yup.string()
+    .required("Senha é obrigatória")
+    .min(6, "Senha deve ter no mínimo 6 caracteres"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "As senhas não coincidem")
+    .required("Confirmação de senha é obrigatória"),
+});
 
 export default function Register() {
+  const navigation = useNavigation();
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleSubmit = async () => {
+    try {
+      setErrors({});
+
+      await validationSchema.validate(
+        { nome, email, password, confirmPassword },
+        { abortEarly: false }
+      );
+      // navigation.navigate("Login");
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errorMessages: { [key: string]: string } = {};
+        err.inner.forEach((error) => {
+          if (error.path) {
+            errorMessages[error.path] = error.message;
+          }
+        });
+
+        setErrors(errorMessages);
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -22,19 +64,28 @@ export default function Register() {
 
       <View style={styles.containerInput}>
         <Input placeholder={"Nome"} value={nome} onChangeText={setNome} />
+        {errors.nome && <Text style={styles.error}>{errors.nome}</Text>}
+
         <Input placeholder={"E-mail"} value={email} onChangeText={setEmail} />
+        {errors.email && <Text style={styles.error}>{errors.email}</Text>}
+
         <Input
           placeholder={"Senha"}
           value={password}
           onChangeText={setPassword}
           secureTextEntry={true}
         />
+        {errors.password && <Text style={styles.error}>{errors.password}</Text>}
+
         <Input
           placeholder={"Confirmar senha"}
-          value={password}
-          onChangeText={setPassword}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
           secureTextEntry={true}
         />
+        {errors.confirmPassword && (
+          <Text style={styles.error}>{errors.confirmPassword}</Text>
+        )}
       </View>
 
       <View
@@ -43,20 +94,7 @@ export default function Register() {
           alignItems: "center",
         }}
       >
-        <Button destination="/" title="CONFIRMAR" variant="primary" />
-
-        <Button
-          destination="/"
-          title="Entrar com Facebook"
-          variant="secondary"
-          iconName="facebook"
-        />
-        <Button
-          destination="/"
-          title="Entrar com Google"
-          variant="tertiary"
-          iconName="google"
-        />
+        <Button title="CONFIRMAR" variant="primary" onPress={handleSubmit} />
       </View>
     </View>
   );
@@ -71,7 +109,7 @@ const styles = StyleSheet.create({
   },
   top: {
     alignItems: "center",
-    marginBottom: 40,
+    padding: 5,
   },
   title: {
     color: "#FFF",
@@ -79,17 +117,12 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   containerInput: {
-    marginTop: 30,
+    padding: 30,
     alignItems: "center",
   },
-
-  forgetPassword: {
-    color: "#FFF",
-    fontWeight: "bold",
-    fontSize: 20,
-    marginBottom: 33,
-  },
-  containerButton: {
-    marginBottom: 96,
+  error: {
+    color: "red",
+    fontSize: 14,
+    margin: 5,
   },
 });

@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { StyleSheet } from "react-native";
-import { View, Text, Image, Alert } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
 import * as Yup from "yup";
-import { useNavigation } from "expo-router";
+import { router } from "expo-router";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
@@ -14,7 +13,6 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function Login() {
-  const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -36,6 +34,10 @@ export default function Login() {
           }
         });
         setErrors(errorMessages);
+
+        setTimeout(() => {
+          setErrors({});
+        }, 5000);
       }
     }
   };
@@ -70,7 +72,7 @@ export default function Login() {
 
       <View style={styles.containerButton}>
         <Button title="ENTRAR" variant="primary" onPress={handleSubmit} />
-        <Button title="CADASTRAR" variant="tertiary" onPress={handleSubmit} />
+        <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("/register")} />
       </View>
     </View>
   );

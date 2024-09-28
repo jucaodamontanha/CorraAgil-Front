@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Image } from "react-native";
-import { StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, StatusBar} from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
 import * as Yup from "yup";
@@ -47,12 +46,18 @@ export default function Register() {
         });
 
         setErrors(errorMessages);
+
+        setTimeout(() => {
+          setErrors({});
+        }, 5000);
       }
     }
   };
 
   return (
+    <>
     <View style={styles.container}>
+    <StatusBar backgroundColor="#12263A" barStyle="light-content" />
       <View style={styles.top}>
         <Image
           source={require("../src/assets/corraAgil.png")}
@@ -95,8 +100,11 @@ export default function Register() {
         }}
       >
         <Button title="CONFIRMAR" variant="primary" onPress={handleSubmit} />
+        <Button title="Entrar com Facebook" variant="secondary" onPress={handleSubmit} />
+        <Button title="Entrar com Google" variant="tertiary" onPress={handleSubmit} />
       </View>
     </View>
+    </>
   );
 }
 

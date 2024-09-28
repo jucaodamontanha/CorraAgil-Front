@@ -1,15 +1,15 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, StyleSheet, StatusBar } from "react-native";
 import { Button } from "../src/components/Button";
-import { StyleSheet } from "react-native";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 
 export default function Home() {
   return (
     <View style={styles.container}>
+      <StatusBar backgroundColor="#12263A" barStyle="light-content" />
       <View style={styles.boxTop}>
         <View style={styles.background}>
-          <Image source={require("../src/assets/home.png")} />
+          <Image source={require("../src/assets/home.png")}/>
         </View>
 
         <View style={styles.transparentView}>
@@ -22,8 +22,8 @@ export default function Home() {
       <View style={styles.boxMid}>
         <Text style={styles.textMid}> Faça login e comece</Text>
         <Text style={styles.textRace}>sua corrida!</Text>
-
-        <Button destination="/login" title="COMEÇAR" variant="secondary" />
+        
+        <Button title="COMEÇAR" variant="tertiary" onPress={() => router.push("/login")}/>
       </View>
 
       <View style={styles.boxBottom}>
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#12263A",
-    justifyContent: "center",
     alignItems: "center",
   },
   boxTop: {
@@ -65,7 +64,7 @@ const styles = StyleSheet.create({
   },
   boxMid: {
     alignItems: "center",
-    marginTop: 25,
+    marginTop: 15,
   },
   textMid: {
     color: "#FFF",
@@ -77,11 +76,10 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 20,
   },
   boxBottom: {
     alignItems: "center",
-    marginTop: 35,
+    marginTop: 25,
   },
   privacyText: {
     color: "#FFF",

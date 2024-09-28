@@ -18,6 +18,7 @@ export function Button({
   title,
   variant = "primary",
   iconName,
+
   ...rest
 }: ButtonProps) {
   return (

@@ -15,6 +15,7 @@ const validationSchema = Yup.object().shape({
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [login, setLogin] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleSubmit = async () => {
@@ -42,6 +43,25 @@ export default function Login() {
     }
   };
 
+  // Envio do form de login
+  async function sendForm() {
+    let response = await fetch("http://192.168.1.104:8080/login", { //trocar pelo ip que aparece ao rodar o app na sua maquina
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: email,
+        password: password,
+      })
+    });
+    let json = await response.json()
+    if(json === "error"){
+      handleSubmit()
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.top}>
@@ -56,13 +76,18 @@ export default function Login() {
       <Text style={styles.title}>Login</Text>
 
       <View style={styles.containerInput}>
-        <Input placeholder={"E-mail"} value={email} onChangeText={setEmail} />
+
+        <Input
+          placeholder={"E-mail"}
+          value={email}
+          onChangeText={text => setEmail(text)}
+        />
         {errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
         <Input
           placeholder={"Senha"}
           value={password}
-          onChangeText={setPassword}
+          onChangeText={text => setPassword(text)}
           secureTextEntry={true}
         />
         {errors.password && <Text style={styles.error}>{errors.password}</Text>}
@@ -71,7 +96,7 @@ export default function Login() {
       <Text style={styles.forgetPassword}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
-        <Button title="ENTRAR" variant="primary" onPress={handleSubmit} />
+        <Button title="ENTRAR" variant="primary" onPress={/*handleSubmit;*/ ()=>sendForm()} />
         <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("/register")} />
       </View>
     </View>

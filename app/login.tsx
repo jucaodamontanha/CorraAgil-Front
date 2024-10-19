@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, StatusBar } from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
 import * as Yup from "yup";
@@ -43,27 +43,60 @@ export default function Login() {
     }
   };
 
-  // Envio do form de login
-  async function sendForm() {
-    let response = await fetch("http://192.168.1.104:8080/login", { //trocar pelo ip que aparece ao rodar o app na sua maquina
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: email,
-        password: password,
-      })
-    });
-    let json = await response.json()
-    if(json === "error"){
-      handleSubmit()
+  const sendForm = async () => {
+    const endPoint = "https://corraagil.onrender.com/cadastro/login";
+
+    try {
+      const response = await fetch(endPoint, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: password,
+        })
+      });
+
+      const responseText = await response.text()
+
+      const contentType = response.headers.get("Content-Type");    
+
+      let data;
+
+      try {
+        if (responseText.startsWith('{') || responseText.startsWith('[')){
+          data = JSON.parse(responseText)
+        } else {
+          data = responseText
+        }
+      } catch (jsonError){
+        throw new Error("Erro ao processar a resposta como JSON: " + jsonError)
+      }
+
+      if (!response.ok) {
+        throw new Error((data.message || response.statusText || data));
+      }
+      
+      if (data.email){
+        setEmail(data.email);
+      }
+
+      if (data.password){
+        setPassword(data.password);
+      }
+
+      alert("Login realizado com sucesso!");
+
+    } catch (error) {
+      alert("Email ou senha inválido.")
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
       <View style={styles.top}>
         <Image source={require("../src/assets/topLogin.png")} />
 
@@ -80,6 +113,10 @@ export default function Login() {
         <Input
           placeholder={"E-mail"}
           value={email}
+          autoCapitalize="none"
+          keyboardType="email-address" // Ativa o teclado específico para emails
+          autoCorrect={false} //desativa a autocorreção de palavras
+          autoComplete="off" //desativa o preenchimento automatico e sugestões
           onChangeText={text => setEmail(text)}
         />
         {errors.email && <Text style={styles.error}>{errors.email}</Text>}
@@ -96,7 +133,8 @@ export default function Login() {
       <Text style={styles.forgetPassword}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
-        <Button title="ENTRAR" variant="primary" onPress={/*handleSubmit;*/ ()=>sendForm()} />
+        <Button title="ENTRAR" variant="primary" onPress={() => sendForm()} />
+        {/* handleSubmit; ()=>sendForm() */}
         <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("/register")} />
       </View>
     </View>

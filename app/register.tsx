@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, StatusBar } from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
 import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 const validationSchema = Yup.object().shape({
   nome: Yup.string()
@@ -19,8 +19,6 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function Register() {
-  const navigation = useNavigation();
-
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +33,6 @@ export default function Register() {
         { nome, email, password, confirmPassword },
         { abortEarly: false }
       );
-      // navigation.navigate("Login");
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errorMessages: { [key: string]: string } = {};

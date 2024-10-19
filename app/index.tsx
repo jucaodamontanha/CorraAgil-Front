@@ -7,7 +7,7 @@ import { router } from "expo-router";
 export default function Home() {
   return (
     <>
-      {/* <StatusBar backgroundColor="#12263A" style="light" /> */}
+      <StatusBar backgroundColor="#12263A" style="light" />
       <View style={styles.container}>
         <View style={styles.boxTop}>
           <View style={styles.background}>

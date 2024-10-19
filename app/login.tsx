@@ -9,7 +9,7 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
   password: Yup.string()
     .required("Senha é obrigatória")
-    .min(6, "Senha deve ter no mínimo 6 caracteres"),
+    .min(8, "Senha deve ter no mínimo 8 caracteres"),
 });
 
 export default function Login() {
@@ -114,9 +114,9 @@ export default function Login() {
           placeholder={"E-mail"}
           value={email}
           autoCapitalize="none"
-          keyboardType="email-address" // Ativa o teclado específico para emails
-          autoCorrect={false} //desativa a autocorreção de palavras
-          autoComplete="off" //desativa o preenchimento automatico e sugestões
+          keyboardType="email-address"
+          autoCorrect={false}
+          autoComplete="off" 
           onChangeText={text => setEmail(text)}
         />
         {errors.email && <Text style={styles.error}>{errors.email}</Text>}
@@ -126,6 +126,7 @@ export default function Login() {
           value={password}
           onChangeText={text => setPassword(text)}
           secureTextEntry={true}
+          autoCapitalize="none"
         />
         {errors.password && <Text style={styles.error}>{errors.password}</Text>}
       </View>
@@ -133,8 +134,7 @@ export default function Login() {
       <Text style={styles.forgetPassword}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
-        <Button title="ENTRAR" variant="primary" onPress={() => sendForm()} />
-        {/* handleSubmit; ()=>sendForm() */}
+        <Button title="ENTRAR" variant="primary" onPress={() => {sendForm(); handleSubmit()}} />
         <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("/register")} />
       </View>
     </View>

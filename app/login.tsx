@@ -18,7 +18,8 @@ export default function Login() {
   const [login, setLogin] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const handleSubmit = async () => {
+  const sendForm = async () => {
+
     try {
       setErrors({});
 
@@ -26,27 +27,9 @@ export default function Login() {
         { email, password },
         { abortEarly: false }
       );
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errorMessages: { [key: string]: string } = {};
-        err.inner.forEach((error) => {
-          if (error.path) {
-            errorMessages[error.path] = error.message;
-          }
-        });
-        setErrors(errorMessages);
 
-        setTimeout(() => {
-          setErrors({});
-        }, 5000);
-      }
-    }
-  };
+      const endPoint = "https://corraagil.onrender.com/cadastro/login";
 
-  const sendForm = async () => {
-    const endPoint = "https://corraagil.onrender.com/cadastro/login";
-
-    try {
       const response = await fetch(endPoint, {
         method: "POST",
         headers: {
@@ -61,36 +44,50 @@ export default function Login() {
 
       const responseText = await response.text()
 
-      const contentType = response.headers.get("Content-Type");    
+      const contentType = response.headers.get("Content-Type");
 
       let data;
 
       try {
-        if (responseText.startsWith('{') || responseText.startsWith('[')){
+        if (responseText.startsWith('{') || responseText.startsWith('[')) {
           data = JSON.parse(responseText)
         } else {
           data = responseText
         }
-      } catch (jsonError){
+      } catch (jsonError) {
         throw new Error("Erro ao processar a resposta como JSON: " + jsonError)
       }
 
       if (!response.ok) {
         throw new Error((data.message || response.statusText || data));
       }
-      
-      if (data.email){
+
+      if (data.email) {
         setEmail(data.email);
       }
 
-      if (data.password){
+      if (data.password) {
         setPassword(data.password);
       }
 
       alert("Login realizado com sucesso!");
 
-    } catch (error) {
-      alert("Email ou senha inválido.")
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errorMessages: { [key: string]: string } = {};
+        err.inner.forEach((error) => {
+          if (error.path) {
+            errorMessages[error.path] = error.message;
+          }
+        });
+        setErrors(errorMessages);
+
+        setTimeout(() => {
+          setErrors({});
+        }, 5000);
+      } else{
+        alert("Email ou senha inválidos")
+      }
     }
   };
 
@@ -116,7 +113,7 @@ export default function Login() {
           autoCapitalize="none"
           keyboardType="email-address"
           autoCorrect={false}
-          autoComplete="off" 
+          autoComplete="off"
           onChangeText={text => setEmail(text)}
         />
         {errors.email && <Text style={styles.error}>{errors.email}</Text>}
@@ -134,7 +131,7 @@ export default function Login() {
       <Text style={styles.forgetPassword}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
-        <Button title="ENTRAR" variant="primary" onPress={() => {sendForm(); handleSubmit()}} />
+        <Button title="ENTRAR" variant="primary" onPress={() => { sendForm() }} />
         <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("/register")} />
       </View>
     </View>

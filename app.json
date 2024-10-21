@@ -4,6 +4,11 @@
     "slug": "CorraAgil",
     "version": "1.0.0",
     "orientation": "portrait",
+    "androidStatusBar": {
+      "backgroundColor": "#12263A",
+      "barStyle": "light-content",
+      "translucent": false
+    },
     "icon": "./src/assets/icon.png",
     "scheme": "CorraAgil",
     "userInterfaceStyle": "light",

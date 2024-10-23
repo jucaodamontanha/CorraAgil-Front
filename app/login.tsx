@@ -128,7 +128,7 @@ export default function Login() {
         {errors.password && <Text style={styles.error}>{errors.password}</Text>}
       </View>
 
-      <Text style={styles.forgetPassword}>ESQUECEU A SENHA?</Text>
+      <Text style={styles.forgetPassword} onPress={() => router.push("/login")}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
         <Button title="ENTRAR" variant="primary" onPress={() => { sendForm() }} />

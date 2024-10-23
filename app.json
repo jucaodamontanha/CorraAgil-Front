@@ -4,6 +4,11 @@
     "slug": "CorraAgil",
     "version": "1.0.0",
     "orientation": "portrait",
+    "androidStatusBar": {
+      "backgroundColor": "#12263A",
+      "barStyle": "light-content",
+      "translucent": false
+    },
     "icon": "./src/assets/icon.png",
     "scheme": "CorraAgil",
     "userInterfaceStyle": "light",
@@ -13,17 +18,29 @@
       "backgroundColor": "#12263A"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.corraagil.corraagil",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/icon.png",
-        "backgroundColor": "#12263A"
-      }
+        "backgroundColor": "#12263A",
+        "package": "com.corraagil.corraagil",
+        "versionCode": 1
+      },
+      "package": "com.pipocaagil.corraagil"
     },
     "web": {
       "favicon": "./src/assets/icon.png"
     },
-    "plugins": ["expo-router"]
+    "plugins": [
+      "expo-router"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7c9ca7c3-ea5a-49e9-b465-0eb22b8fcfc8"
+      }
+    }
   }
 }

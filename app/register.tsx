@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, StatusBar} from "react-native";
+import { Alert, View, Text, Image, StyleSheet, StatusBar } from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
 import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/native";
+import { router, useRouter } from "expo-router";
 
 const validationSchema = Yup.object().shape({
   nome: Yup.string()
@@ -12,14 +12,15 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
   password: Yup.string()
     .required("Senha é obrigatória")
-    .min(6, "Senha deve ter no mínimo 6 caracteres"),
+    .min(8, "Senha deve ter no mínimo 8 caracteres")
+    .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/, "A senha deve conter pelo menos uma letra maiúscula e um caractere especial"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "As senhas não coincidem")
     .required("Confirmação de senha é obrigatória"),
 });
 
 export default function Register() {
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -27,7 +28,8 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const handleSubmit = async () => {
+  const sendForm = async () => {
+
     try {
       setErrors({});
 
@@ -35,7 +37,45 @@ export default function Register() {
         { nome, email, password, confirmPassword },
         { abortEarly: false }
       );
-      // navigation.navigate("Login");
+
+      const endPoint = "https://corraagil.onrender.com/cadastro"
+
+
+      const response = await fetch(endPoint, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nomeCompleto: nome,
+          email: email,
+          senha: password,
+
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao fazer o cadastro")
+      }
+      const json = await response.json()
+
+      const dados = {
+        nomeCompleto: json.nomeCompleto,
+        email: json.email,
+        senha: json.password
+      }
+
+      setNome(dados.nomeCompleto)
+      setEmail(dados.email)
+      setPassword(dados.senha)
+      setConfirmPassword("")
+
+      Alert.alert("Sucesso", "Conta registrada com sucesso", [
+        { text: "OK", onPress: () => router.push("/login") }
+      ], { cancelable: false }
+      );
+
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errorMessages: { [key: string]: string } = {};
@@ -56,54 +96,67 @@ export default function Register() {
 
   return (
     <>
-    <View style={styles.container}>
-    <StatusBar backgroundColor="#12263A" barStyle="light-content" />
-      <View style={styles.top}>
-        <Image
-          source={require("../src/assets/corraAgil.png")}
-          style={{ marginTop: 23 }}
-        />
+      <View style={styles.container}>
+        <StatusBar backgroundColor="#12263A" barStyle="light-content" />
+        <View style={styles.top}>
+          <Image
+            source={require("../src/assets/corraAgil.png")}
+            style={{ marginTop: 23 }}
+          />
+        </View>
+
+        <Text style={styles.title}>Criar uma conta</Text>
+
+        <View style={styles.containerInput}>
+          <Input
+            placeholder={"Nome"}
+            value={nome}
+            onChangeText={setNome} />
+          {errors.nome && <Text style={styles.error}>{errors.nome}</Text>}
+
+          <Input
+            placeholder={"E-mail"}
+            value={email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoCorrect={false}
+            autoComplete="off"
+            onChangeText={setEmail}
+          />
+          {errors.email && <Text style={styles.error}>{errors.email}</Text>}
+
+          <Input
+            placeholder={"Senha"}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={true}
+            autoCapitalize="none"
+          />
+          {errors.password && <Text style={styles.error}>{errors.password}</Text>}
+
+          <Input
+            placeholder={"Confirmar senha"}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={true}
+            autoCapitalize="none"
+          />
+          {errors.confirmPassword && (
+            <Text style={styles.error}>{errors.confirmPassword}</Text>
+          )}
+        </View>
+
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button title="CONFIRMAR" variant="primary" onPress={() => sendForm()} />
+          {/* <Button title="Entrar com Facebook" variant="secondary" onPress={handleSubmit} />
+          <Button title="Entrar com Google" variant="tertiary" onPress={handleSubmit} /> */}
+        </View>
       </View>
-
-      <Text style={styles.title}>Criar uma conta</Text>
-
-      <View style={styles.containerInput}>
-        <Input placeholder={"Nome"} value={nome} onChangeText={setNome} />
-        {errors.nome && <Text style={styles.error}>{errors.nome}</Text>}
-
-        <Input placeholder={"E-mail"} value={email} onChangeText={setEmail} />
-        {errors.email && <Text style={styles.error}>{errors.email}</Text>}
-
-        <Input
-          placeholder={"Senha"}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-        />
-        {errors.password && <Text style={styles.error}>{errors.password}</Text>}
-
-        <Input
-          placeholder={"Confirmar senha"}
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry={true}
-        />
-        {errors.confirmPassword && (
-          <Text style={styles.error}>{errors.confirmPassword}</Text>
-        )}
-      </View>
-
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Button title="CONFIRMAR" variant="primary" onPress={handleSubmit} />
-        <Button title="Entrar com Facebook" variant="secondary" onPress={handleSubmit} />
-        <Button title="Entrar com Google" variant="tertiary" onPress={handleSubmit} />
-      </View>
-    </View>
     </>
   );
 }

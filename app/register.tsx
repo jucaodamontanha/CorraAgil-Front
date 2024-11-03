@@ -3,7 +3,8 @@ import { Alert, View, Text, Image, StyleSheet, StatusBar } from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
 import * as Yup from "yup";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
 
 const validationSchema = Yup.object().shape({
   nome: Yup.string()
@@ -26,12 +27,15 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false);
 
   const sendForm = async () => {
 
     try {
       setErrors({});
+      setLoading(true);
 
       await validationSchema.validate(
         { nome, email, password, confirmPassword },
@@ -55,9 +59,34 @@ export default function Register() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Erro ao fazer o cadastro")
+      const responseText = await response.text()
+
+      console.log(responseText)
+
+      let data
+
+      try {
+        if (responseText.startsWith('{') || responseText.startsWith('[')) {
+          data = JSON.parse(responseText)
+        } else {
+          data = responseText
+        }
+      } catch (jsonError) {
+        throw new Error("Erro ao processaar a resposta como JSON: " + jsonError)
       }
+
+      if (!response.ok) {
+        if (response.status === 500) {
+          alert("Erro no servidor. Tente novamente mais tarde")
+          throw new Error("Erro no servidor. Tente novamente mais tarde");
+        } else if (response.status === 409) {
+          alert("Email ja cadastrado")
+          throw new Error("Email ja cadastrado");
+        } else {
+          throw new Error((data.message || response.statusText || data));
+        }
+      }
+
       const json = await response.json()
 
       const dados = {
@@ -70,11 +99,6 @@ export default function Register() {
       setEmail(dados.email)
       setPassword(dados.senha)
       setConfirmPassword("")
-
-      Alert.alert("Sucesso", "Conta registrada com sucesso", [
-        { text: "OK", onPress: () => router.push("/login") }
-      ], { cancelable: false }
-      );
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
@@ -91,6 +115,12 @@ export default function Register() {
           setErrors({});
         }, 5000);
       }
+    } finally {
+      Alert.alert("Sucesso", "Conta registrada com sucesso", [
+        { text: "OK", onPress: () => router.push("/login") }
+      ], { cancelable: false }
+      );
+      setLoading(false);
     }
   };
 
@@ -129,8 +159,11 @@ export default function Register() {
             placeholder={"Senha"}
             value={password}
             onChangeText={setPassword}
-            secureTextEntry={true}
+            secureTextEntry={isPasswordVisible}
             autoCapitalize="none"
+            IconRigth={Ionicons}
+            iconRigthName={isPasswordVisible ? "eye-off" : "eye"}
+            onIconRigthPress={() => setIsPasswordVisible(!isPasswordVisible)}
           />
           {errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
@@ -138,8 +171,11 @@ export default function Register() {
             placeholder={"Confirmar senha"}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-            secureTextEntry={true}
+            secureTextEntry={isPasswordVisible}
             autoCapitalize="none"
+            IconRigth={Ionicons}
+            iconRigthName={isPasswordVisible ? "eye-off" : "eye"}
+            onIconRigthPress={() => setIsPasswordVisible(!isPasswordVisible)}
           />
           {errors.confirmPassword && (
             <Text style={styles.error}>{errors.confirmPassword}</Text>
@@ -152,7 +188,7 @@ export default function Register() {
             alignItems: "center",
           }}
         >
-          <Button title="CONFIRMAR" variant="primary" onPress={() => sendForm()} />
+          <Button title="CONFIRMAR" variant="primary" onPress={() => sendForm()} loading={loading} />
           {/* <Button title="Entrar com Facebook" variant="secondary" onPress={handleSubmit} />
           <Button title="Entrar com Google" variant="tertiary" onPress={handleSubmit} /> */}
         </View>

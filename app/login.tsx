@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { View, Text, Image, StyleSheet, StatusBar } from "react-native";
+import { View, Text, Image, StyleSheet, StatusBar, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
 import * as Yup from "yup";
 import { router } from "expo-router";
+import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
@@ -15,13 +16,15 @@ const validationSchema = Yup.object().shape({
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [login, setLogin] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false);
 
   const sendForm = async () => {
 
     try {
       setErrors({});
+      setLoading(true);
 
       await validationSchema.validate(
         { email, password },
@@ -85,9 +88,11 @@ export default function Login() {
         setTimeout(() => {
           setErrors({});
         }, 5000);
-      } else{
+      } else {
         alert("Email ou senha inválidos")
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,23 +120,37 @@ export default function Login() {
           autoCorrect={false}
           autoComplete="off"
           onChangeText={text => setEmail(text)}
+          IconRigth={MaterialIcons}
+          iconRigthName="email"
         />
+
         {errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
         <Input
           placeholder={"Senha"}
           value={password}
           onChangeText={text => setPassword(text)}
-          secureTextEntry={true}
+          secureTextEntry={isPasswordVisible}
           autoCapitalize="none"
+          IconRigth={Ionicons}
+          iconRigthName={isPasswordVisible ? "eye-off" : "eye"}
+          onIconRigthPress={() => setIsPasswordVisible(!isPasswordVisible)}
         />
+
         {errors.password && <Text style={styles.error}>{errors.password}</Text>}
+
       </View>
 
       <Text style={styles.forgetPassword} onPress={() => router.push("/login")}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
-        <Button title="ENTRAR" variant="primary" onPress={() => { sendForm() }} />
+        <Button
+          title="ENTRAR"
+          variant="primary"
+          onPress={() => {sendForm() }} 
+          loading ={loading} 
+          />
+
         <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("/register")} />
       </View>
     </View>
@@ -158,7 +177,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
     alignItems: "center",
   },
-
+  toggleButton: {
+    padding: 10
+  },
+  toggleButtonText: {
+    fontSize: 16
+  },
   forgetPassword: {
     color: "#FFF",
     fontWeight: "bold",

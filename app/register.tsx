@@ -55,9 +55,26 @@ export default function Register() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Erro ao fazer o cadastro")
+      const responseText = await response.text()
+
+      console.log(responseText)
+
+      let data
+
+      try {
+        if (responseText.startsWith('{') || responseText.startsWith('[')){
+          data = JSON.parse(responseText)
+        } else {
+          data = responseText
+        }
+      } catch (jsonError){
+        throw new Error("Erro ao processaar a resposta como JSON: " + jsonError)
       }
+
+      if (!response.ok) {
+        throw new Error((data.message || response.statusText || data));
+      }
+      
       const json = await response.json()
 
       const dados = {
@@ -90,6 +107,8 @@ export default function Register() {
         setTimeout(() => {
           setErrors({});
         }, 5000);
+      } else{
+        alert("Email já cadastrado.")
       }
     }
   };

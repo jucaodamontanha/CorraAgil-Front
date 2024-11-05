@@ -6,6 +6,8 @@ import * as Yup from "yup";
 import { useRouter } from "expo-router";
 import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
 
+//!@#$%^&*(),.?":{}|<>
+
 const validationSchema = Yup.object().shape({
   nome: Yup.string()
     .required("Nome é obrigatório")
@@ -14,7 +16,7 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .required("Senha é obrigatória")
     .min(8, "Senha deve ter no mínimo 8 caracteres")
-    .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/, "A senha deve conter pelo menos uma letra maiúscula e um caractere especial"),
+    .matches(/^(?=.*[A-Z])(?=.*[@#%&$]).*$/, "A senha deve conter pelo menos uma letra maiúscula e um caractere especial (@, #, %, & ou $)"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "As senhas não coincidem")
     .required("Confirmação de senha é obrigatória"),
@@ -61,44 +63,53 @@ export default function Register() {
 
       const responseText = await response.text()
 
-      console.log(responseText)
-
       let data
 
       try {
-        if (responseText.startsWith('{') || responseText.startsWith('[')) {
-          data = JSON.parse(responseText)
-        } else {
-          data = responseText
-        }
+        data = responseText.startsWith("{") || responseText.startsWith("[")
+          ? JSON.parse(responseText)
+          : responseText;
       } catch (jsonError) {
-        throw new Error("Erro ao processaar a resposta como JSON: " + jsonError)
+        throw new Error("Erro ao processar a resposta como JSON: " + jsonError);
       }
 
       if (!response.ok) {
         if (response.status === 500) {
-          alert("Erro no servidor. Tente novamente mais tarde")
+          alert("Erro no servidor. Tente novamente mais tarde");
           throw new Error("Erro no servidor. Tente novamente mais tarde");
         } else if (response.status === 409) {
-          alert("Email ja cadastrado")
+          alert("Email ja cadastrado");
+          throw new Error("Email ja cadastrado");
+        } else if (response.status === 400) {
+          alert("A senha deve ter no mínimo 8 caracteres, pelo menos um caractere especial (@, #, %, & ou $) e uma letra maiúscula.");
           throw new Error("Email ja cadastrado");
         } else {
           throw new Error((data.message || response.statusText || data));
         }
       }
 
-      const json = await response.json()
+      Alert.alert("Sucesso", "Conta registrada com sucesso", [
+        { text: "OK", onPress: () => router.push("/login") }
+      ]);
 
-      const dados = {
-        nomeCompleto: json.nomeCompleto,
-        email: json.email,
-        senha: json.password
-      }
+      setNome("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
 
-      setNome(dados.nomeCompleto)
-      setEmail(dados.email)
-      setPassword(dados.senha)
-      setConfirmPassword("")
+      // const json = await response.json()
+
+      // const dados = {
+      //   nomeCompleto: json.nomeCompleto,
+      //   email: json.email,
+      //   senha: json.password
+      // }
+
+      // setNome(dados.nomeCompleto)
+      // setEmail(dados.email)
+      // setPassword(dados.senha)
+      // setConfirmPassword("")
+
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
@@ -116,10 +127,6 @@ export default function Register() {
         }, 5000);
       }
     } finally {
-      Alert.alert("Sucesso", "Conta registrada com sucesso", [
-        { text: "OK", onPress: () => router.push("/login") }
-      ], { cancelable: false }
-      );
       setLoading(false);
     }
   };

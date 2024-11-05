@@ -2,7 +2,7 @@
   "expo": {
     "name": "CorraAgil",
     "slug": "CorraAgil",
-    "version": "1.0.2",
+    "version": "1.0.0",
     "orientation": "portrait",
     "androidStatusBar": {
       "backgroundColor": "#12263A",
@@ -27,7 +27,7 @@
         "foregroundImage": "./src/assets/icon.png",
         "backgroundColor": "#12263A",
         "package": "com.corraagil.corraagil",
-        "versionCode": 2
+        "versionCode": 1
       },
       "package": "com.pipocaagil.corraagil"
     },

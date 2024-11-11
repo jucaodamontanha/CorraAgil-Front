@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Alert, View, Text, Image, StyleSheet, StatusBar } from "react-native";
-import { Input } from "../src/components/Input";
-import { Button } from "../src/components/Button";
+import { Alert, View, Text, Image, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
+import { Input } from "../../src/components/Input";
+import { Button } from "../../src/components/Button";
+import styles from "./styles";
 import * as Yup from "yup";
 import { useRouter } from "expo-router";
-import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 //!@#$%^&*(),.?":{}|<>
 
@@ -89,27 +90,13 @@ export default function Register() {
       }
 
       Alert.alert("Sucesso", "Conta registrada com sucesso", [
-        { text: "OK", onPress: () => router.push("/login") }
+        { text: "OK", onPress: () => router.push("../login/login") }
       ]);
 
       setNome("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-
-      // const json = await response.json()
-
-      // const dados = {
-      //   nomeCompleto: json.nomeCompleto,
-      //   email: json.email,
-      //   senha: json.password
-      // }
-
-      // setNome(dados.nomeCompleto)
-      // setEmail(dados.email)
-      // setPassword(dados.senha)
-      // setConfirmPassword("")
-
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
@@ -137,7 +124,7 @@ export default function Register() {
         <StatusBar backgroundColor="#12263A" barStyle="light-content" />
         <View style={styles.top}>
           <Image
-            source={require("../src/assets/corraAgil.png")}
+            source={require("../../src/assets/corraAgil.png")}
             style={{ marginTop: 23 }}
           />
         </View>
@@ -199,34 +186,11 @@ export default function Register() {
           {/* <Button title="Entrar com Facebook" variant="secondary" onPress={handleSubmit} />
           <Button title="Entrar com Google" variant="tertiary" onPress={handleSubmit} /> */}
         </View>
+
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
       </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#12263A",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  top: {
-    alignItems: "center",
-    padding: 5,
-  },
-  title: {
-    color: "#FFF",
-    fontWeight: "bold",
-    fontSize: 32,
-  },
-  containerInput: {
-    padding: 30,
-    alignItems: "center",
-  },
-  error: {
-    color: "red",
-    fontSize: 14,
-    margin: 5,
-  },
-});

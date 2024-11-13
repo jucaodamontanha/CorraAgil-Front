@@ -3,7 +3,10 @@ import { Alert, View, Text, Image, StyleSheet, StatusBar } from "react-native";
 import { Input } from "../src/components/Input";
 import { Button } from "../src/components/Button";
 import * as Yup from "yup";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
+
+//!@#$%^&*(),.?":{}|<>
 
 const validationSchema = Yup.object().shape({
   nome: Yup.string()
@@ -13,7 +16,7 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .required("Senha é obrigatória")
     .min(8, "Senha deve ter no mínimo 8 caracteres")
-    .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/, "A senha deve conter pelo menos uma letra maiúscula e um caractere especial"),
+    .matches(/^(?=.*[A-Z])(?=.*[@#%&$]).*$/, "A senha deve conter pelo menos uma letra maiúscula e um caractere especial (@, #, %, & ou $)"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "As senhas não coincidem")
     .required("Confirmação de senha é obrigatória"),
@@ -26,12 +29,15 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false);
 
   const sendForm = async () => {
 
     try {
       setErrors({});
+      setLoading(true);
 
       await validationSchema.validate(
         { nome, email, password, confirmPassword },
@@ -55,26 +61,55 @@ export default function Register() {
         }),
       });
 
+      const responseText = await response.text()
+
+      let data
+
+      try {
+        data = responseText.startsWith("{") || responseText.startsWith("[")
+          ? JSON.parse(responseText)
+          : responseText;
+      } catch (jsonError) {
+        throw new Error("Erro ao processar a resposta como JSON: " + jsonError);
+      }
+
       if (!response.ok) {
-        throw new Error("Erro ao fazer o cadastro")
+        if (response.status === 500) {
+          alert("Erro no servidor. Tente novamente mais tarde");
+          throw new Error("Erro no servidor. Tente novamente mais tarde");
+        } else if (response.status === 409) {
+          alert("Email ja cadastrado");
+          throw new Error("Email ja cadastrado");
+        } else if (response.status === 400) {
+          alert("A senha deve ter no mínimo 8 caracteres, pelo menos um caractere especial (@, #, %, & ou $) e uma letra maiúscula.");
+          throw new Error("Email ja cadastrado");
+        } else {
+          throw new Error((data.message || response.statusText || data));
+        }
       }
-      const json = await response.json()
-
-      const dados = {
-        nomeCompleto: json.nomeCompleto,
-        email: json.email,
-        senha: json.password
-      }
-
-      setNome(dados.nomeCompleto)
-      setEmail(dados.email)
-      setPassword(dados.senha)
-      setConfirmPassword("")
 
       Alert.alert("Sucesso", "Conta registrada com sucesso", [
         { text: "OK", onPress: () => router.push("/login") }
-      ], { cancelable: false }
-      );
+      ]);
+
+      setNome("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+
+      // const json = await response.json()
+
+      // const dados = {
+      //   nomeCompleto: json.nomeCompleto,
+      //   email: json.email,
+      //   senha: json.password
+      // }
+
+      // setNome(dados.nomeCompleto)
+      // setEmail(dados.email)
+      // setPassword(dados.senha)
+      // setConfirmPassword("")
+
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
@@ -91,6 +126,8 @@ export default function Register() {
           setErrors({});
         }, 5000);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,8 +166,11 @@ export default function Register() {
             placeholder={"Senha"}
             value={password}
             onChangeText={setPassword}
-            secureTextEntry={true}
+            secureTextEntry={isPasswordVisible}
             autoCapitalize="none"
+            IconRigth={Ionicons}
+            iconRigthName={isPasswordVisible ? "eye-off" : "eye"}
+            onIconRigthPress={() => setIsPasswordVisible(!isPasswordVisible)}
           />
           {errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
@@ -138,8 +178,11 @@ export default function Register() {
             placeholder={"Confirmar senha"}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-            secureTextEntry={true}
+            secureTextEntry={isPasswordVisible}
             autoCapitalize="none"
+            IconRigth={Ionicons}
+            iconRigthName={isPasswordVisible ? "eye-off" : "eye"}
+            onIconRigthPress={() => setIsPasswordVisible(!isPasswordVisible)}
           />
           {errors.confirmPassword && (
             <Text style={styles.error}>{errors.confirmPassword}</Text>
@@ -152,7 +195,7 @@ export default function Register() {
             alignItems: "center",
           }}
         >
-          <Button title="CONFIRMAR" variant="primary" onPress={() => sendForm()} />
+          <Button title="CONFIRMAR" variant="primary" onPress={() => sendForm()} loading={loading} />
           {/* <Button title="Entrar com Facebook" variant="secondary" onPress={handleSubmit} />
           <Button title="Entrar com Google" variant="tertiary" onPress={handleSubmit} /> */}
         </View>

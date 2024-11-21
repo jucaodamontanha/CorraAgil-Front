@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, TouchableOpacity } from "react-native";
+import { View, Text, Image, StatusBar, TouchableOpacity, Alert } from "react-native";
 import { useState } from "react";
 import { Input } from "../../src/components/Input";
 import { Button } from "../../src/components/Button";
@@ -58,10 +58,10 @@ export default function ForgotPassword() {
 
       if (!response.ok) {
         if (response.status === 500) {
-          alert("Erro no servidor. Tente novamente mais tarde")
+         Alert.alert("Erro","Erro no servidor. Tente novamente mais tarde")
           throw new Error("Erro no servidor. Tente novamente mais tarde");
         } else if (response.status === 400 || response.status === 401 || response.status === 404) {
-          alert("Email de usuario não cadastrado")
+          Alert.alert("Erro","Email de usuario não cadastrado")
           throw new Error("Email de usuario não cadastrado");
         } else {
           throw new Error((data.message || response.statusText || data));
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
         setEmail(data.email);
       }
 
-      router.push("../linkEmail/linkEmail")
+      router.push("../resetPassword/resetPassword")
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {

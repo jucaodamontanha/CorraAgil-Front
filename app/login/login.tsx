@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, Image, StyleSheet, StatusBar } from "react-native";
+import { View, Text, Image, StatusBar, Alert } from "react-native";
 import { Input } from "../../src/components/Input";
 import { Button } from "../../src/components/Button";
 import * as Yup from "yup";
@@ -65,10 +65,10 @@ export default function Login() {
 
       if (!response.ok) {
         if (response.status === 500) {
-          alert("Erro no servidor. Tente novamente mais tarde")
+          Alert.alert("Erro","Erro no servidor. Tente novamente mais tarde")
           throw new Error("Erro no servidor. Tente novamente mais tarde");
         } else if (response.status === 400 || response.status === 401) {
-          alert("Email ou senha inválidos")
+          Alert.alert("Erro","Email ou senha inválidos")
           throw new Error("Email ou senha inválidos");
         } else {
           throw new Error((data.message || response.statusText || data));
@@ -83,7 +83,7 @@ export default function Login() {
         setPassword(data.password);
       }
 
-      alert("Login realizado com sucesso!");
+      Alert.alert("Sucesso", "Login realizado com sucesso!");
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {

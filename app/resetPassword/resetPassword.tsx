@@ -1,19 +1,13 @@
-import React, { useState } from "react";
-import { Alert, View, Text, Image, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
-import { Input } from "../../src/components/Input";
+import { View, Text, Image, StatusBar, TouchableOpacity, Alert } from "react-native";
 import { Button } from "../../src/components/Button";
-import styles from "./styles";
-import * as Yup from "yup";
-import { useRouter } from "expo-router";
+import { Input } from "../../src/components/Input";
+import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-
-//!@#$%^&*(),.?":{}|<>
+import { useRouter } from "expo-router";
+import * as Yup from "yup";
+import styles from "./style";
 
 const validationSchema = Yup.object().shape({
-  nome: Yup.string()
-    .required("Nome é obrigatório")
-    .min(3, "Nome deve ter no mínimo 3 caracteres"),
-  email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
   password: Yup.string()
     .required("Senha é obrigatória")
     .min(8, "Senha deve ter no mínimo 8 caracteres")
@@ -23,30 +17,27 @@ const validationSchema = Yup.object().shape({
     .required("Confirmação de senha é obrigatória"),
 });
 
-export default function Register() {
-  const router = useRouter();
-
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
+export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [token, setToken] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
 
-  const sendForm = async () => {
+  const router = useRouter();
 
+  const sendResetPassword = async () => {
     try {
       setErrors({});
       setLoading(true);
 
       await validationSchema.validate(
-        { nome, email, password, confirmPassword },
+        { password, confirmPassword },
         { abortEarly: false }
       );
 
-      const endPoint = "https://corraagil.onrender.com/cadastro"
-
+      const endPoint = "https://corraagil.onrender.com/saveSenha"
 
       const response = await fetch(endPoint, {
         method: "POST",
@@ -55,10 +46,8 @@ export default function Register() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nomeCompleto: nome,
-          email: email,
-          senha: password,
-
+          token: token,
+          senha: password
         }),
       });
 
@@ -83,18 +72,20 @@ export default function Register() {
           throw new Error("Email ja cadastrado");
         } else if (response.status === 400) {
           Alert.alert("Erro","A senha deve ter no mínimo 8 caracteres, pelo menos um caractere especial (@, #, %, & ou $) e uma letra maiúscula.");
-          throw new Error("Email ja cadastrado");
+          throw new Error("Senha fora dos padroes");
+        } else if (response.status === 401) {
+          Alert.alert("Erro","Token inválido ou expirado");
+          throw new Error("Token inválido");
         } else {
           throw new Error((data.message || response.statusText || data));
         }
       }
 
-      Alert.alert("Sucesso", "Conta registrada com sucesso", [
+      Alert.alert("Sucesso", "Senha alterada com sucesso.", [
         { text: "OK", onPress: () => router.push("../login/login") }
       ]);
 
-      setNome("");
-      setEmail("");
+      setToken("");
       setPassword("");
       setConfirmPassword("");
 
@@ -116,41 +107,39 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <>
       <View style={styles.container}>
         <StatusBar backgroundColor="#12263A" barStyle="light-content" />
-        <View style={styles.top}>
+        <View style={styles.boxTitle}>
+
           <Image
-            source={require("../../src/assets/corraAgil.png")}
-            style={{ marginTop: 23 }}
-          />
+            source={require("../../src/assets/corraAgil.png")} />
+
+          <Text style={styles.textTitle}>Redefinir Senha</Text>
+
         </View>
 
-        <Text style={styles.title}>Criar uma conta</Text>
+        <View style={styles.boxMid}>
 
-        <View style={styles.containerInput}>
-          <Input
-            placeholder={"Nome"}
-            value={nome}
-            onChangeText={setNome} />
-          {errors.nome && <Text style={styles.error}>{errors.nome}</Text>}
+          <Text style={styles.textMid}>Dica: Deve conter 8 caracteres sendo 1 letra maiúscula e 1 caractere diferente</Text>
 
-          <Input
-            placeholder={"E-mail"}
-            value={email}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            autoCorrect={false}
-            autoComplete="off"
-            onChangeText={setEmail}
+        </View>
+
+        <View style={styles.boxInput}>
+
+          <Text style={styles.textInput}>Token</Text>
+
+          <Input placeholder={"Token"}
+          value={token}
+          onChangeText={setToken}
           />
-          {errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
-          <Input
-            placeholder={"Senha"}
+          <Text style={styles.textInput}>Senha</Text>
+
+          <Input placeholder={"Senha"}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={isPasswordVisible}
@@ -159,7 +148,10 @@ export default function Register() {
             iconRigthName={isPasswordVisible ? "eye-off" : "eye"}
             onIconRigthPress={() => setIsPasswordVisible(!isPasswordVisible)}
           />
+
           {errors.password && <Text style={styles.error}>{errors.password}</Text>}
+
+          <Text style={styles.textInput}>Confirmar nova senha</Text>
 
           <Input
             placeholder={"Confirmar senha"}
@@ -171,25 +163,19 @@ export default function Register() {
             iconRigthName={isPasswordVisible ? "eye-off" : "eye"}
             onIconRigthPress={() => setIsPasswordVisible(!isPasswordVisible)}
           />
+
           {errors.confirmPassword && (
             <Text style={styles.error}>{errors.confirmPassword}</Text>
           )}
+
         </View>
 
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Button title="CONFIRMAR" variant="primary" onPress={() => sendForm()} loading={loading} />
-          {/* <Button title="Entrar com Facebook" variant="secondary" onPress={handleSubmit} />
-          <Button title="Entrar com Google" variant="tertiary" onPress={handleSubmit} /> */}
-        </View>
+        <Button title="CRIAR NOVA SENHA" variant="tertiary" onPress={() => sendResetPassword()} loading={loading} />
 
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
+
       </View>
     </>
   );

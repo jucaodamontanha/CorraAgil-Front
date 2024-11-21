@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { View, Text, Image, StyleSheet, StatusBar, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
-import { Input } from "../src/components/Input";
-import { Button } from "../src/components/Button";
+import { View, Text, Image, StatusBar, Alert } from "react-native";
+import { Input } from "../../src/components/Input";
+import { Button } from "../../src/components/Button";
 import * as Yup from "yup";
 import { router } from "expo-router";
-import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import styles from "./styles";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
@@ -64,10 +65,10 @@ export default function Login() {
 
       if (!response.ok) {
         if (response.status === 500) {
-          alert("Erro no servidor. Tente novamente mais tarde")
+          Alert.alert("Erro","Erro no servidor. Tente novamente mais tarde")
           throw new Error("Erro no servidor. Tente novamente mais tarde");
         } else if (response.status === 400 || response.status === 401) {
-          alert("Email ou senha inválidos")
+          Alert.alert("Erro","Email ou senha inválidos")
           throw new Error("Email ou senha inválidos");
         } else {
           throw new Error((data.message || response.statusText || data));
@@ -82,7 +83,7 @@ export default function Login() {
         setPassword(data.password);
       }
 
-      alert("Login realizado com sucesso!");
+      Alert.alert("Sucesso", "Login realizado com sucesso!");
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
@@ -107,10 +108,10 @@ export default function Login() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <View style={styles.top}>
-        <Image source={require("../src/assets/topLogin.png")} />
+        <Image source={require("../../src/assets/topLogin.png")} />
 
         <Image
-          source={require("../src/assets/corraAgil.png")}
+          source={require("../../src/assets/corraAgil.png")}
           style={{ marginTop: 23 }}
         />
       </View>
@@ -148,7 +149,7 @@ export default function Login() {
 
       </View>
 
-      <Text style={styles.forgetPassword} onPress={() => router.push("/login")}>ESQUECEU A SENHA?</Text>
+      <Text style={styles.forgetPassword} onPress={() => router.push("../forgotPassword/forgotPassword")}>ESQUECEU A SENHA?</Text>
 
       <View style={styles.containerButton}>
         <Button
@@ -158,50 +159,8 @@ export default function Login() {
           loading={loading}
         />
 
-        <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("/register")} />
+        <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../register/register")} />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#12263A",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  top: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
-  title: {
-    color: "#FFF",
-    fontWeight: "bold",
-    fontSize: 32,
-  },
-  containerInput: {
-    marginTop: 30,
-    alignItems: "center",
-  },
-  toggleButton: {
-    padding: 10
-  },
-  toggleButtonText: {
-    fontSize: 16
-  },
-  forgetPassword: {
-    color: "#FFF",
-    fontWeight: "bold",
-    fontSize: 20,
-    marginBottom: 33,
-  },
-  containerButton: {
-    marginBottom: 96,
-  },
-  error: {
-    color: "red",
-    fontSize: 14,
-    margin: 5,
-  },
-});

@@ -8,6 +8,7 @@ import Register from "../app/register/register";
 import ForgotPassword from "../app/forgotPassword/forgotPassword";
 import LinkEmail from "../app/linkEmail/linkEmail";
 import ResetPassword from "../app/resetPassword/resetPassword";
+import ChangedPassword from "../app/changedPassword/changedPassword";
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,7 @@ export default function AppNavigator() {
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: "Esqueceu a Senha" }}/>
         <Stack.Screen name="LinkEmail" component={LinkEmail} options={{ title: "Envio E-mail" }}/>
         <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: "Reset de Senha" }}/>
+        <Stack.Screen name="ChangedPassword" component={ChangedPassword} options={{ title: "Senha Alterada" }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -72,7 +72,7 @@ export default function ForgotPassword() {
         setEmail(data.email);
       }
 
-      router.push("../resetPassword/resetPassword")
+      router.push("../linkEmail/linkEmail")
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {

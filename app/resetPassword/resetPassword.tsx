@@ -81,9 +81,7 @@ export default function ResetPassword() {
         }
       }
 
-      Alert.alert("Sucesso", "Senha alterada com sucesso.", [
-        { text: "OK", onPress: () => router.push("../login/login") }
-      ]);
+      router.push("../changedPassword/changedPassword")
 
       setToken("");
       setPassword("");

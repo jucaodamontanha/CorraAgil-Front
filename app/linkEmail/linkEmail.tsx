@@ -1,10 +1,18 @@
 import { View, Text, Image, StatusBar, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { useEffect } from "react";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 
 export default function LinkEmail() {
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            router.push("../resetPassword/resetPassword");
+        }, 5000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <>
             <View style={styles.container}>
@@ -16,7 +24,7 @@ export default function LinkEmail() {
 
                 <View style={styles.boxMid}>
                     <Text style={styles.textMid}>
-                        Acabamos de enviar um link para o seu e-mail.
+                        Acabamos de enviar um token para o seu e-mail.
                     </Text>
                 </View>
 

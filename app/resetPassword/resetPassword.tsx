@@ -1,9 +1,9 @@
 import { View, Text, Image, StatusBar, TouchableOpacity, Alert } from "react-native";
+import { useState } from "react";
 import { Button } from "../../src/components/Button";
 import { Input } from "../../src/components/Input";
-import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import * as Yup from "yup";
 import styles from "./style";
 
@@ -20,10 +20,10 @@ const validationSchema = Yup.object().shape({
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [token, setToken] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
+  const { token } = useGlobalSearchParams();
 
   const router = useRouter();
 
@@ -46,12 +46,13 @@ export default function ResetPassword() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          token: token,
+          token,
           senha: password
         }),
       });
 
       const responseText = await response.text()
+      console.log("token recebido: ", token)
 
       let data
 
@@ -83,7 +84,6 @@ export default function ResetPassword() {
 
       router.push("../changedPassword/changedPassword")
 
-      setToken("");
       setPassword("");
       setConfirmPassword("");
 
@@ -107,6 +107,8 @@ export default function ResetPassword() {
     }
   }
 
+  console.log("token recebido: ", token)
+
   return (
     <>
       <View style={styles.container}>
@@ -127,13 +129,6 @@ export default function ResetPassword() {
         </View>
 
         <View style={styles.boxInput}>
-
-          <Text style={styles.textInput}>Token</Text>
-
-          <Input placeholder={"Token"}
-          value={token}
-          onChangeText={setToken}
-          />
 
           <Text style={styles.textInput}>Senha</Text>
 

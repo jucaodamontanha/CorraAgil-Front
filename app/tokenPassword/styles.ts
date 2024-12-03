@@ -21,6 +21,15 @@ const styles = StyleSheet.create({
         fontSize: 27,
         marginBottom: 58
     },
+    boxToken: {
+        width: 346
+    },
+    textToken: {
+        color: "#FFF",
+        fontWeight:"bold",
+        textAlign: "left",
+        fontSize: 20,
+    },
     boxBottom: {
         width: 362
     },
@@ -28,6 +37,7 @@ const styles = StyleSheet.create({
         color: "#FFF",
         textAlign: "center",
         fontSize: 13,
+        marginTop: 50
     },
     backButton: {
         position: "absolute",

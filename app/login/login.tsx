@@ -159,7 +159,8 @@ export default function Login() {
           loading={loading}
         />
 
-        <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../register/register")} />
+        {/* <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../register/register")} /> */}
+        <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../running/running")} />
       </View>
     </View>
   );

@@ -94,7 +94,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <>
+    
       <View style={styles.container}>
         <StatusBar backgroundColor="#12263A" barStyle="light-content" />
         <View style={styles.imageView}>
@@ -133,6 +133,5 @@ export default function ForgotPassword() {
 
       </View>
 
-    </>
   );
 }

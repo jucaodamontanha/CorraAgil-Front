@@ -32,6 +32,12 @@ const styles = StyleSheet.create({
         fontWeight: 400,
         fontSize: 16
     },
+    countdownContainer:{
+
+    },
+    countdownText:{
+
+    },
     status: {
         width: 350,
         height: 67,
@@ -80,6 +86,23 @@ const styles = StyleSheet.create({
         marginTop: 385,
         marginLeft: 170
     },
+    boxButton:{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 13
+    },
+    buttonRun: {
+        width: 157,
+        height: 37,
+        backgroundColor: "#FFA500",
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        paddingHorizontal: 10,
+        marginTop: 20,
+        fontSize: 17
+    },
     blurView: {
         width: 334,
         height: 66,
@@ -96,7 +119,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
     },
-    text:{
+    text: {
         color: "#FFA500",
         fontSize: 12,
     }

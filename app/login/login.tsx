@@ -84,6 +84,7 @@ export default function Login() {
       }
 
       Alert.alert("Sucesso", "Login realizado com sucesso!");
+      router.push("../running/running")
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {

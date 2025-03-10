@@ -29,6 +29,9 @@ export const styles = StyleSheet.create({
   icon: {
     marginRight: 10,
   },
+  iconCenter:{
+
+  },
   textButton: {
     fontSize: 20,
     fontWeight: "bold",

@@ -2,7 +2,7 @@ import { Image, StatusBar, Text, View, Alert } from "react-native"
 import { useEffect, useRef, useState } from "react";
 import styles from "./style"
 import { Button } from "../../src/components/Button"
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { BlurView } from 'expo-blur';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -32,21 +32,21 @@ export default function Running() {
 
     const R = 6371; // Raio da Terra em km
     const dLat = toRad(coords2.latitude - coords1.latitude);
-  const dLon = toRad(coords2.longitude - coords1.longitude);
-    
+    const dLon = toRad(coords2.longitude - coords1.longitude);
+
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(toRad(coords1.latitude)) * Math.cos(toRad(coords2.latitude)) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c; // Retorna a distância em km
   };
 
 
-   // Atualiza a localização do usuário em tempo real
-   useEffect(() => {
+  // Atualiza a localização do usuário em tempo real
+  useEffect(() => {
     let subscription: Location.LocationSubscription | null = null;
 
     (async () => {
@@ -80,24 +80,24 @@ export default function Running() {
 
   // Atualiza o cálculo das calorias gastas com base no tempo
   const updateCalories = (newDistance: number) => {
-  if (newDistance > distance) {
-    const elapsedTime = (hours * 60) + minutes + (seconds / 60); // Tempo total em minutos
-    const MET = 9.8; // Valor de MET para corrida (ajuste conforme necessário)
-    const userWeight = 70; // Peso do usuário em kg (pode ser dinâmico)
+    if (newDistance > distance) {
+      const elapsedTime = (hours * 60) + minutes + (seconds / 60); // Tempo total em minutos
+      const MET = 9.8; // Valor de MET para corrida (ajuste conforme necessário)
+      const userWeight = 70; // Peso do usuário em kg (pode ser dinâmico)
 
-    const newCalories = userWeight * MET * (elapsedTime / 60);
-    setCalories(parseFloat(newCalories.toFixed(2))); 
-  }
-};
+      const newCalories = userWeight * MET * (elapsedTime / 60);
+      setCalories(parseFloat(newCalories.toFixed(2)));
+    }
+  };
 
-useEffect(() => {
-  if (location && previousLocation) {
-    const newDistance = getDistanceFromLatLonInKm(previousLocation.coords, location.coords);
-    setDistance((prev) => prev + newDistance);
-    updateCalories(distance + newDistance);
-  }
-  setPreviousLocation(location);
-}, [location]);
+  useEffect(() => {
+    if (location && previousLocation) {
+      const newDistance = getDistanceFromLatLonInKm(previousLocation.coords, location.coords);
+      setDistance((prev) => prev + newDistance);
+      updateCalories(distance + newDistance);
+    }
+    setPreviousLocation(location);
+  }, [location]);
 
 
 
@@ -188,13 +188,14 @@ useEffect(() => {
           onPress: () => {
             clearTimer(); // Reseta o tempo
             setPaused(true);
-            
+
             const userTimer = getTotalTimeInSeconds()
             const userDistance = distance;
             const userCalories = calories;
-            
+
             setDistance(0);
             setCalories(0);
+
           }
         }
       ]
@@ -473,7 +474,9 @@ useEffect(() => {
                   title="Pausar"
                   variant="primary"
                   onPress={stopTimer}
-                  style={styles.buttonRun} />
+                  style={styles.buttonRun}
+                  IconCenter={MaterialIcons}
+                  IconCenterName="pause" />
 
               </View>
             }
@@ -482,26 +485,27 @@ useEffect(() => {
           <BlurView intensity={4} style={[styles.blurView, { backgroundColor: '#12263A' }]}>
 
             <View style={styles.buttonMenu}>
-              <Text
-                style={styles.text}
-              >
-                Notificação
-              </Text>
 
-              <Text
-                style={styles.text}>
-                Correr
-              </Text>
+              <View style={styles.notification}>
+                <MaterialIcons name="notifications" size={24} color="#FFA500" />
+                <Text style={styles.text}> Notificação </Text>
+              </View>
 
-              <Text
-                style={styles.text}>
-                Timer
-              </Text>
+              <View style={styles.run}>
+                <MaterialIcons name="directions-run" size={24} color="#FFA500" />
+                <Text style={styles.text}> Correr </Text>
+              </View>
 
-              <Text
-                style={styles.text}>
-                Histórico
-              </Text>
+              <View style={styles.timerButton}>
+                <MaterialIcons name="timer" size={24} color="#FFA500" />
+                <Text style={styles.text}> Timer </Text>
+              </View>
+
+              <View style={styles.historical}>
+                <Octicons name="history" size={24} color="#FFA500" />
+                <Text style={styles.text}> Histórico </Text>
+
+              </View>
 
             </View>
 

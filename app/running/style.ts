@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
         fontWeight: 400,
         fontSize: 16
     },
-    countdownContainer:{
+    countdownContainer: {
 
     },
-    countdownText:{
+    countdownText: {
 
     },
     status: {
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         marginTop: 385,
         marginLeft: 170
     },
-    boxButton:{
+    boxButton: {
         flexDirection: "row",
         justifyContent: "space-between",
         marginBottom: 13
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     buttonMenu: {
         width: 335,
         height: 66,
-        marginTop: 29,
+        marginTop: 14,
         flexDirection: "row",
         justifyContent: "space-between",
         paddingLeft: 10,
@@ -122,6 +122,22 @@ const styles = StyleSheet.create({
     text: {
         color: "#FFA500",
         fontSize: 12,
+    },
+    notification: {
+        alignItems: "center",
+        justifyContent: "flex-start"
+    },
+    run: {
+        alignItems: "center",
+        justifyContent: "flex-start"
+    },
+    timerButton: {
+        alignItems: "center",
+        justifyContent: "flex-start"
+    },
+    historical: {
+        alignItems: "center",
+        justifyContent: "flex-start"
     }
 })
 

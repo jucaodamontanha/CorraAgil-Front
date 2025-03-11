@@ -83,7 +83,7 @@ export default function Login() {
         setPassword(data.password);
       }
 
-      Alert.alert("Sucesso", "Login realizado com sucesso!");
+      // Alert.alert("Sucesso", "Login realizado com sucesso!");
       router.push("../running/running")
 
     } catch (err) {
@@ -160,8 +160,8 @@ export default function Login() {
           loading={loading}
         />
 
-        {/* <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../register/register")} /> */}
-        <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../running/running")} />
+        <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../register/register")} />
+        {/* <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../running/running")} /> */}
       </View>
     </View>
   );

@@ -1,12 +1,13 @@
 import React, { forwardRef, LegacyRef } from "react";
 import { View, Text, TextInput, TextInputProps, TouchableOpacity } from 'react-native';
-import { FontAwesome, Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons, MaterialIcons, Octicons, AntDesign } from "@expo/vector-icons";
 import { styles } from "./styles";
 
 type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>> | 
                      React.ComponentType<React.ComponentProps<typeof FontAwesome>> |
                      React.ComponentType<React.ComponentProps<typeof Octicons>> |
-                     React.ComponentType<React.ComponentProps<typeof Ionicons>>;
+                     React.ComponentType<React.ComponentProps<typeof Ionicons>> |
+                     React.ComponentType<React.ComponentProps<typeof AntDesign>>;
 
 type Props = TextInputProps & {
     IconRigth?: IconComponent,

@@ -83,7 +83,8 @@ export default function Login() {
         setPassword(data.password);
       }
 
-      Alert.alert("Sucesso", "Login realizado com sucesso!");
+      // Alert.alert("Sucesso", "Login realizado com sucesso!");
+      router.push("../running/running")
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
@@ -160,6 +161,7 @@ export default function Login() {
         />
 
         <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../register/register")} />
+        {/* <Button title="CADASTRAR" variant="tertiary" onPress={() => router.push("../running/running")} /> */}
       </View>
     </View>
   );

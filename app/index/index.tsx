@@ -5,7 +5,7 @@ import { Button } from "../../src/components/Button";
 import { router } from "expo-router";
 import styles from "./styles";
 
-export default function Home() {
+export default function Index() {
   return (
     <>
       <StatusBar backgroundColor="#12263A" style="light" />

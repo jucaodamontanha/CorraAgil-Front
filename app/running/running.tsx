@@ -6,6 +6,7 @@ import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { BlurView } from 'expo-blur';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
+import { router } from "expo-router";
 
 
 export default function Running() {
@@ -14,8 +15,11 @@ export default function Running() {
   const [hours, setHours] = useState(0);
   const [customInterval, setCustomInterval] = useState<ReturnType<typeof setInterval> | null>(null);
   const [paused, setPaused] = useState(true);
-
   const [distance, setDistance] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [userTimer, setUserTimer] = useState(0);
+  const [userDistance, setUserDistance] = useState(0);
+  const [userCalories, setUserCalories] = useState(0);
   const [previousLocation, setPreviousLocation] = useState<Location.LocationObject | null>(null);
   const [calories, setCalories] = useState(0);
   const userWeight = 70; // Peso do usuário (pode ser dinâmico)
@@ -57,10 +61,11 @@ export default function Running() {
           distanceInterval: 1, // Atualiza a cada 1m
         },
         (response) => {
-          if (previousLocation) {
+          if (!paused && previousLocation) {
             const newDistance = getDistanceFromLatLonInKm(previousLocation.coords, response.coords);
 
             setDistance((prev) => prev + newDistance);
+            // updateCalories(distance + newDistance);
           }
 
           setPreviousLocation(response);
@@ -75,7 +80,7 @@ export default function Running() {
         subscription.remove();
       }
     };
-  }, [previousLocation]);
+  }, [previousLocation, paused]);
 
 
   // Atualiza o cálculo das calorias gastas com base no tempo
@@ -186,50 +191,42 @@ export default function Running() {
         {
           text: "Finalizar",
           onPress: () => {
-            clearTimer(); // Reseta o tempo
-            setPaused(true);
+            const totalTime = getTotalTimeInSeconds();
+            const formattedTime = formatTime(totalTime);
 
-            const userTimer = getTotalTimeInSeconds()
-            const userDistance = distance;
-            const userCalories = calories;
+            setUserTimer(totalTime);
+            setUserDistance(distance);  
+            setUserCalories(calories);
+
+            sendRace();
 
             setDistance(0);
             setCalories(0);
+            clearTimer(); // Reseta o tempo
+            setPaused(true);
 
+            Alert.alert(
+              "Corrida Finalizada",
+              `Tempo total da corrida: ${formattedTime}`,
+              [{ text: "OK" }]
+            );
           }
         }
       ]
-    );
+    );  
+  };
+
+  const formatTime = (totalSeconds: number) => {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
   const getTotalTimeInSeconds = () => {
     const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
     return totalSeconds;
   };
-
-  // useEffect(() => {
-  //   let subscription: Location.LocationSubscription | null = null;
-
-  //   (async () => {
-  //     subscription = await Location.watchPositionAsync(
-  //       {
-  //         accuracy: Location.Accuracy.Highest,
-  //         timeInterval: 1000,
-  //         distanceInterval: 1,
-  //       },
-  //       (response) => {
-  //         setLocation(response);
-  //         mapRef.current?.animateCamera({ center: response.coords });
-  //       }
-  //     );
-  //   })();
-
-  //   return () => {
-  //     if (subscription) {
-  //       subscription.remove();
-  //     }
-  //   };
-  // }, []);
 
   const darkMapStyle = [
     {
@@ -393,6 +390,65 @@ export default function Running() {
     }
   ]
 
+  const sendRace = async () => {
+
+    try {
+      setLoading(true);
+
+      const endPoint = "";
+
+      const response = await fetch(endPoint, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          time: userTimer,
+          distance: userDistance,
+          calories: userCalories,
+          // user: idUser
+        })
+      });
+
+      const responseText = await response.text()
+      console.log(responseText)
+
+      const contentType = response.headers.get("Content-Type");
+
+      let data;
+
+      try {
+        if (responseText.startsWith('{') || responseText.startsWith('[')) {
+          data = JSON.parse(responseText)
+        } else {
+          data = responseText
+        }
+      } catch (jsonError) {
+        throw new Error("Erro ao processar a resposta como JSON: " + jsonError)
+      }
+
+      if (!response.ok) {
+        if (response.status === 500) {
+          Alert.alert("Erro", "Erro no servidor. Tente novamente mais tarde")
+          throw new Error("Erro no servidor. Tente novamente mais tarde");
+        } else if (response.status === 400 || response.status === 401) {
+          Alert.alert("Erro", "Email ou senha inválidos")
+          throw new Error("Email ou senha inválidos");
+        } else {
+          throw new Error((data.message || response.statusText || data));
+        }
+      }
+
+      Alert.alert("Sucesso", "Corrida salva com sucesso!");
+
+
+    } catch (err) {
+
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
